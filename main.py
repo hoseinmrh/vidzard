@@ -1,6 +1,7 @@
 import os
 import argparse
 from dotenv import load_dotenv
+import torch
 from src.vidzard.data.data_handler import load_json, save_json
 from src.vidzard.analysis.transcriber import transcribe_video
 from src.vidzard.analysis.analyzer import get_important_segments
@@ -14,8 +15,14 @@ def main():
     parser.add_argument('--transcript_path', type=str, default='transcript.json', help='Path to save or load the transcript.')
     parser.add_argument('--important_ids_path', type=str, default='important_ids.json', help='Path to save or load the important segment IDs.')
     parser.add_argument('--chunk_size', type=int, default=20, help='Number of transcript segments to process in each chunk.')
+    parser.add_argument('--device', type=str, default='cuda', choices=['cuda', 'cpu'], help='Device to use for transcription (cuda or cpu).')
     
     args = parser.parse_args()
+
+    device = args.device
+    if device == 'cuda' and not torch.cuda.is_available():
+        print("CUDA not available, switching to CPU.")
+        device = 'cpu'
 
     load_dotenv()
     api_key = os.getenv("GEMINI_API_KEY")
@@ -24,7 +31,7 @@ def main():
 
     # 1. Transcribe video
     if not os.path.exists(args.transcript_path):
-        segments = transcribe_video(args.video_path)
+        segments = transcribe_video(args.video_path, device=device)
         save_json(segments, args.transcript_path)
     
     # 2. Analyze transcript
