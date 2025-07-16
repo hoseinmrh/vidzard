@@ -6,9 +6,10 @@ from google.api_core import exceptions
 def get_important_segments(transcript_chunks, user_prompt, api_key):
     """Identifies important segments from transcript chunks using the Gemini API."""
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-2.5-flash')
 
     important_ids = []
+    important_ids_txt = []
     for i, chunk in enumerate(transcript_chunks):
         prompt = f"""Based on the following video transcript and the user's prompt, identify the most important segments. Return a comma-separated list of their IDs.
 
@@ -28,10 +29,17 @@ Important Segment IDs:"""
                 time.sleep(60)
 
         try:
-            cleaned_response = ''.join(filter(str.isdigit, response.text.replace(',', ' ')))
-            ids = [int(id) for id in cleaned_response.split()]
+            print("Process i", i)
+            important_ids_txt.append(response.text)
+            ids = [int(id) for id in response.text.split(",")]
             important_ids.extend(ids)
+            print(important_ids)
         except (ValueError, AttributeError):
             print(f"Could not parse response from Gemini API: {response.text}")
-
+            continue
+    
+    # save the important ids text to a file
+    with open('important_ids.txt', 'w') as f:
+        for txt in important_ids_txt:
+            f.write(txt + '\n')
     return important_ids

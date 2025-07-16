@@ -12,7 +12,7 @@ def create_highlight_video(video_path, transcript, segment_ids, output_path):
             segment = next((s for s in transcript if s['id'] == segment_id), None)
             if segment:
                 start_time = max(0, segment['start'])
-                end_time = segment['end'] + 0.5
+                end_time = segment['end']
                 temp_output_path_ts = f"temp_{i}.ts"
                 temp_files.append(temp_output_path_ts)
                 cut_segment(video_path, start_time, end_time, temp_output_path_ts, fmt='mpegts')

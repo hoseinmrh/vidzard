@@ -37,8 +37,11 @@ def main():
     # 2. Analyze transcript
     transcript = load_json(args.transcript_path)
     transcript_chunks = [transcript[i:i + args.chunk_size] for i in range(0, len(transcript), args.chunk_size)]
-    important_ids = get_important_segments(transcript_chunks, args.user_prompt, api_key)
-    save_json(important_ids, args.important_ids_path)
+    if not os.path.exists(args.important_ids_path):
+        important_ids = get_important_segments(transcript_chunks, args.user_prompt, api_key)
+        save_json(important_ids, args.important_ids_path)
+    else:
+        important_ids = load_json(args.important_ids_path)
 
     # 3. Create highlight video
     create_highlight_video(args.video_path, transcript, important_ids, args.output_path)
