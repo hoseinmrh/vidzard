@@ -24,3 +24,5 @@ Thumbs.db
 *.mp4
 individual_clips/
 .env
+*.json
+important_ids.txt

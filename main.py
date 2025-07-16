@@ -2,7 +2,7 @@ import os
 import argparse
 from dotenv import load_dotenv
 import torch
-from src.vidzard.data.data_handler import load_json, save_json
+from src.vidzard.data.data_handler import load_json, save_json, process_important_ids
 from src.vidzard.analysis.transcriber import transcribe_video
 from src.vidzard.analysis.analyzer import get_important_segments
 from src.vidzard.video.composer import create_highlight_video
@@ -43,8 +43,13 @@ def main():
     else:
         important_ids = load_json(args.important_ids_path)
 
+    # 3. Process important IDs to get video time cuts
+    if not os.path.exists('videos_time_cut.json'):
+        process_important_ids()
+        
+    videos_time_cut = load_json('videos_time_cut.json')
     # 3. Create highlight video
-    create_highlight_video(args.video_path, transcript, important_ids, args.output_path)
+    create_highlight_video(args.video_path, transcript, videos_time_cut, args.output_path)
 
 if __name__ == "__main__":
     main()
