@@ -4,7 +4,7 @@ This project is a Python-based solution for automatically generating highlight r
 
 ## Features
 
-- **YouTube Video Downloader**: Downloads videos from YouTube for processing. (Handled externally, `video.mp4` is the expected input)
+- **YouTube Video Downloader**: Includes a script to download videos from YouTube for processing.
 - **Video Transcription**: Uses OpenAI's Whisper model to generate accurate, timestamped transcripts.
 - **AI-Powered Analysis**: Employs the Gemini API to analyze the transcript and select the most important segments based on a user-provided prompt.
 - **Automated Video Editing**: Uses `ffmpeg` to cut and concatenate the selected video segments into a seamless highlight video.
@@ -77,24 +77,25 @@ python main.py --video_path my_interview.mp4 --user_prompt "Find the key moments
 
 ```
 vidzard-core/
-├── .env                  # For API keys and environment variables
-├── .gitignore            # Git ignore file
-├── main.py               # Main script to run the full pipeline
-├── requirements.txt      # Project dependencies
+├── main.py                     # Main script to run the full pipeline
+├── requirements.txt            # Project dependencies
+├── video.mp4                   # Example input video
+├── final_highlight.mp4         # Example output video
+├── individual_clips/           # Directory for individual video clips
 ├── scripts/
-│   └── video_cutter.py   # Standalone script for video cutting (can be adapted)
+│   ├── video_cutter.py         # Standalone script for video cutting
+│   └── youtube_downloader.py   # Script to download videos from YouTube
 └── src/
+    ├── utils/
+    │   ├── highlight.py        # Contains the main high-level functions to generate highlights
+    │   └── video_utils.py      # Utility functions for video processing
     └── vidzard/
-        ├── __init__.py
         ├── analysis/
-        │   ├── __init__.py
         │   ├── analyzer.py       # Handles transcript analysis with Gemini
         │   └── transcriber.py    # Handles video transcription with Whisper
         ├── data/
-        │   ├── __init__.py
         │   └── data_handler.py   # Utility functions for data handling (JSON, etc.)
         └── video/
-            ├── __init__.py
             ├── composer.py       # Composes the final video from clips
             └── editor.py         # Handles video editing tasks (cutting, etc.)
 ```
